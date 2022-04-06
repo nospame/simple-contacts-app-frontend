@@ -21,8 +21,8 @@ export default {
         })
 
     },
-    createContact: function () {
-      axios.post('/contacts', this.newContact)
+    createContact: function (contact) {
+      axios.post('/contacts', contact)
         .then(response => {
           console.log(response.data);
           this.contacts.push(response.data);
@@ -65,9 +65,8 @@ export default {
       <input v-model="newContact.phone_number" />
       <br />Image URL
       <input v-model="newContact.image" />
-      <br />
-      <button v-on:click="createContact()">Add Contact</button>
     </p>
+    <button v-on:click="createContact(newContact)">Add Contact</button>
     <div v-for="contact in contacts" id="contacts-list" v-bind:key="contact.id">
       <p>
         <img v-bind:src="contact.image" />
@@ -79,6 +78,8 @@ export default {
     </div>
     <dialog id="contact-details">
       <form method="dialog">
+        <button class="close-dialog">X</button>
+        <br />
         <img v-bind:src="currentContact.image" />
         <h2>{{ currentContact.first_name }} {{ currentContact.last_name }}</h2>
         <p>
@@ -96,10 +97,8 @@ export default {
         </p>
         <p>
           <button v-on:click="updateContact(currentContact)">Update</button>
-          <button v-on:click="deleteContact(currentContact)">Delete Contact</button>
+          <button v-on:click="deleteContact(currentContact)" id="delete">Delete Contact</button>
         </p>
-
-        <button>Close</button>
       </form>
     </dialog>
   </div>
@@ -112,5 +111,16 @@ export default {
 
 #contact-details img {
   width: 300px;
+}
+
+#contact-details #delete {
+  color: red;
+}
+
+.close-dialog {
+  background-color: white;
+  border: none;
+  position: absolute;
+  right: 10px;
 }
 </style>
