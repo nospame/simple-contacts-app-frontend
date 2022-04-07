@@ -6,7 +6,8 @@ export default {
       message: "Welcome to the Contacts App!",
       contacts: [],
       newContact: {},
-      currentContact: {}
+      currentContact: {},
+      errors: []
     };
   },
   created: function () {
@@ -26,6 +27,12 @@ export default {
         .then(response => {
           console.log(response.data);
           this.contacts.push(response.data);
+          this.errors = [];
+          this.newContact = {};
+        })
+        .catch(errors => {
+          this.errors = errors.response.data.errors;
+          console.log(this.errors);
         })
     },
     showContact: function (contact) {
@@ -34,9 +41,14 @@ export default {
       document.querySelector("#contact-details").showModal();
     },
     updateContact: function (contact) {
-      axios.patch(`/contacts/${contact.id}.json`, this.currentContact)
+      axios.patch(`/contacts/${contact.id}.json`, contact)
         .then(response => {
           console.log(response.data);
+          this.errors = [];
+        })
+        .catch(errors => {
+          this.errors = errors.response.data.errors;
+          console.log(this.errors);
         })
     },
     deleteContact: function (contact) {
@@ -45,6 +57,7 @@ export default {
         .then(response => {
           console.log(response.data);
           this.contacts.splice(this.contacts.indexOf(contact), 1);
+          this.errors = [];
         })
     }
   },
@@ -66,6 +79,10 @@ export default {
       <br />Image URL
       <input v-model="newContact.image" />
     </p>
+    <small v-for="error in errors">
+      {{ error }}
+      <br />
+    </small>
     <button v-on:click="createContact(newContact)">Add Contact</button>
     <div v-for="contact in contacts" id="contacts-list" v-bind:key="contact.id">
       <p>
